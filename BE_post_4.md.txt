@@ -1,0 +1,117 @@
+[백엔드] 개발_총정리#4 (DBMS)
+
+>
+- 포인트
+	1. RDBMS 와 NoSQL
+    2. RDBMS에서 CRUD
+    3. NoSQL에서 CRUD
+    
+-------
+### 0. DBMS
+- 데이터를 효율적으로 저장, 관리, 조회하는 프로그램.
+
+----
+
+### 1. RDBMS 와 NoSQL
+>
+**1.1. RDBMS(Relational DataBase Management System)**
+: 관계형 데이터베이스를 관리하는 시스템
+: 모든 데이터를 테이블 단위로 저장하며, 각 테이블은 속성과 튜플로 구성
+: 사건이나 사물의 특성을 관계로 표현하며, (1:1관계, 1대N관계, N:N관계)
+: EX) Oracle, MySQL, PostgreSQL, MariaDB 등
+: SQL 언어로 작업 수행
+>>- SQL 종류
+
+
+|    구분   |                    명칭                   |                 주요 명령어                 | 핵심 역할              | 한줄 요약                               |
+| :-----: | :-------------------------------------: | :------------------------------------: | :----------------- | :---------------------------------- |
+| **DDL** |    Data Definition Language (데이터 정의어)   |  `CREATE`, `ALTER`, `DROP`, `TRUNCATE` | 테이블·스키마 구조 정의 및 변경 | **데이터 구조를 정의하는 언어**                 |
+| **DML** |   Data Manipulation Language (데이터 조작어)  | `SELECT`, `INSERT`, `UPDATE`, `DELETE` | 데이터 조회 및 수정        | **데이터를 다루는 언어 (CRUD)**              |
+| **DCL** |     Data Control Language (데이터 제어어)     |            `GRANT`, `REVOKE`           | 사용자 권한 부여·회수       | **접근 권한을 제어하는 언어**                  |
+
+---
+>**1.2. NoSQL(Not Only SQL)**
+: SQL을 사용하지 않는 DBMS
+: SNS와 같은 서비스가 등장하면서 저장형식이 일정하지 않은 비정형 데이터를 효율적으로 관리하기 위해 개발
+: RDBMS는 데이터 저장 유형이 테이블 뿐이지만, NoSQL은 document(json, xml 형식) / 키-값(읽고 쓰는 속도 빠름) / 그래프(4개 이상의 테이블 이용하는 복잡한 쿼리 수행 시) 등
+
+----
+### 2. RDBMS에서 CRUD
+>
+2.1. 테이블 생성하기
+- CREATE문 사용하여 테이블 생성
+
+|   테이블 생성 CREATE문 형식   |
+| :---: |
+CREATE TABLE 테이블명 (
+	속성명1	데이터 타입,
+    속성명2	데이터_타입,
+    ,,,
+    속성명N	데이터_타입,
+    PRIMARY KEY (속성명)
+);
+
+-> 내가 실무에서 사용했던 실제 예시로 적용해보면
+
+CREATE TABLE user (
+	int	BIGINT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(10) NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+
+
+
+>2.2. 데이터 CRUD
+
+|   구분  |    명령어   | 역할                     | 예시                                                   | 핵심 요점               |
+| :---: | :------: | :--------------------- | :--------------------------------------------------- | :------------------ |
+| **C** | `INSERT` | 새로운 데이터 **추가(Create)** | `INSERT INTO user(name, age) VALUES ('Namhun', 26);` | 테이블에 새로운 행(Row)을 생성 |
+| **R** | `SELECT` | 저장된 데이터 **조회(Read)**   | `SELECT * FROM user WHERE age > 20;`                 | 조건에 맞는 데이터 검색 및 조회  |
+| **U** | `UPDATE` | 기존 데이터 **수정(Update)**  | `UPDATE user SET age = 27 WHERE name = 'Namhun';`    | 특정 행의 컬럼 값을 변경      |
+| **D** | `DELETE` | 데이터 **삭제(Delete)**     | `DELETE FROM user WHERE name = 'Namhun';`            | 조건에 맞는 데이터를 제거      |
+
+
+>
+2.3. 테이블 조인
+
+|        조인 유형        |      키워드     | 결합 방식                      | 결과 특징                 | 예시 SQL                                                                                 |
+| :-----------------: | :----------: | :------------------------- | :-------------------- | :------------------------------------------------------------------------------------- |
+|    **INNER JOIN**   | `INNER JOIN` | 두 테이블의 **공통된 데이터만 결합**     | 일치하는 행만 반환            | `sql<br>SELECT u.name, o.id FROM users u INNER JOIN orders o ON u.id = o.user_id;<br>` |
+|    **LEFT JOIN**    |  `LEFT JOIN` | 왼쪽 테이블의 **모든 데이터 + 일치 행**  | 오른쪽에 없는 경우 NULL       | `sql<br>SELECT u.name, o.id FROM users u LEFT JOIN orders o ON u.id = o.user_id;<br>`  |
+|    **RIGHT JOIN**   | `RIGHT JOIN` | 오른쪽 테이블의 **모든 데이터 + 일치 행** | 왼쪽에 없는 경우 NULL        | `sql<br>SELECT u.name, o.id FROM users u RIGHT JOIN orders o ON u.id = o.user_id;<br>` |
+| **FULL OUTER JOIN** |  `FULL JOIN` | 양쪽 테이블의 **모든 데이터 결합**      | 일치하지 않아도 포함 (NULL 허용) | `sql<br>SELECT u.name, o.id FROM users u FULL JOIN orders o ON u.id = o.user_id;<br>`  |
+|    **CROSS JOIN**   | `CROSS JOIN` | **모든 조합** (곱집합)            | 조건 없이 모든 행 × 행 결합     | `sql<br>SELECT u.name, o.id FROM users u CROSS JOIN orders o;<br>`                     |
+
+![](https://velog.velcdn.com/images/huni6711/post/2d56c000-a0bd-470c-ba44-d7ec67acc82a/image.png)
+
+---
+### 3. NoSQL에서의 CRUD
+> 
+1.1. MongoDB 특징
+: NoSQL의 대표적인 몽고DB로 RDBMS와 비교해보면, 테이블 간의 관계가 아닌 컬렉션과 도큐먼트를 사용해 데이터를 저장하는 것
+
+|      구성 요소     |    대응되는 RDB 개념   | 설명                  | 예시                                                                       | 핵심 특징                    |
+| :------------: | :--------------: | :------------------ | :----------------------------------------------------------------------- | :----------------------- |
+|  **Database**  |   스키마(Database)  | 데이터의 최상위 저장 단위      | `use mydb`                                                               | 여러 컬렉션을 포함하는 컨테이너        |
+| **Collection** |    테이블(Table)    | 문서(Document)들의 그룹   | `db.users`                                                               | 동일한 구조의 문서들을 묶음          |
+|  **Document**  |  행(Row, Record)  | 실제 데이터 단위 (JSON 형태) | `json<br>{ "name": "Namhun", "age": 26, "email": "test@email.com" }<br>` | BSON(Binary JSON) 형태로 저장 |
+|    **Field**   |    컬럼(Column)    | 데이터의 속성(Key-Value)  | `"name": "Namhun"`                                                       | Key-Value 기반, 구조 유연      |
+
+----
+### 4. RDBMS vs NoSQL
+|     구분     |         **RDBMS**         |    **NoSQL (예: MongoDB)**    | **핵심 요약**                        |
+| :--------: | :-----------------------: | :--------------------------: | :------------------------------- |
+| **데이터 구조** |      테이블 기반 (행·열 구조)      |        문서 기반 (JSON 형태)       | **RDBMS = 구조적**, **NoSQL = 유연함** |
+|   **스키마**  |     고정 스키마 (사전 정의 필요)     |       스키마리스 (동적 필드 가능)       | 구조 변경 시 유연성 차이 큼                 |
+| **데이터 관계** |    JOIN으로 다중 테이블 관계 표현    |         중첩 문서로 관계 표현         | JOIN 대신 **내장(Embedded)** 사용      |
+|   **확장성**  |    수직 확장 (서버 성능 업그레이드)    |       수평 확장 (샤딩, 분산 저장)      | 대규모 트래픽엔 NoSQL 유리                |
+|  **트랜잭션**  |       ACID (일관성 중시)       |         BASE (가용성 중시)        | **RDBMS → 안정성**, **NoSQL → 유연성** |
+|  **쿼리 언어** |            SQL            | 자체 쿼리 문법 (ex. MongoDB Query) | SQL은 표준화, NoSQL은 자유로운 형태         |
+| **적합한 환경** |      금융, ERP, 정형 데이터      |       로그, IoT, 비정형 데이터       | 서비스 목적에 따라 선택                    |
+|  **대표 예시** | MySQL, PostgreSQL, Oracle |   MongoDB, Redis, Cassandra  | 둘 다 백엔드 핵심 DB로 사용됨               |
+---
+
+- 이미지 출처
+https://brunch.co.kr/@cheonmyung/29
